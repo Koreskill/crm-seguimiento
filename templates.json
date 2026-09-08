@@ -1,0 +1,40 @@
+{
+  "stages": {
+    "sin_contactar": {
+      "label": "Sin Contactar",
+      "color": "#555555",
+      "emoji": "📋",
+      "message": "Hola {{nombre}} 👋 Soy Benja de KoreSkill, agencia de marketing digital. Vi tu negocio de {{rubro}} en {{ciudad}} y me gustaría mostrarte cómo podemos ayudarte a conseguir más clientes con Meta Ads. ¿Tenés 5 min para una consulta rápida sin cargo?"
+    },
+    "enviado": {
+      "label": "Enviado",
+      "color": "#3b82f6",
+      "emoji": "📤",
+      "message": "Hola {{nombre}}, te escribía para hacer seguimiento de mi mensaje anterior. Trabajo con negocios de {{rubro}} en {{ciudad}} y me gustaría contarte los resultados que estamos logrando para negocios similares. ¿Pudiste verlo? 🚀"
+    },
+    "respondio": {
+      "label": "Respondió",
+      "color": "#f59e0b",
+      "emoji": "💬",
+      "message": "Genial {{nombre}}! Para contarte brevemente, en KoreSkill nos especializamos en campañas de Meta Ads para {{rubro}}. Estamos logrando resultados muy buenos para negocios en {{ciudad}}. ¿Te parece si coordinamos una llamada de 20 min para mostrarte nuestro método y ver si somos una buena opción?"
+    },
+    "interesado": {
+      "label": "Interesado",
+      "color": "#00d46a",
+      "emoji": "🤝",
+      "message": "{{nombre}}, perfecto! Acá te dejo el link para agendar nuestra sesión de estrategia gratuita: [TU_LINK_CALENDLY] 📅 En esa llamada te cuento todo el proceso y los resultados que podemos lograr para tu negocio. ¿Tenés alguna pregunta antes?"
+    },
+    "cerrado": {
+      "label": "Cerrado",
+      "color": "#10b981",
+      "emoji": "✅",
+      "message": "{{nombre}}, bienvenido a KoreSkill! 🎉 Vamos a ponernos en contacto esta semana para arrancar con la estrategia. Cualquier consulta no dudes en escribirme."
+    },
+    "no_interesado": {
+      "label": "No Interesado",
+      "color": "#ef4444",
+      "emoji": "❌",
+      "message": "Perfecto {{nombre}}, no hay problema. Si en algún momento querés saber más sobre cómo funcionamos, estaré disponible. ¡Mucho éxito con tu negocio! 👋"
+    }
+  }
+}
