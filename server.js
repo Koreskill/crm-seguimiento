@@ -52,7 +52,7 @@ function rowToContact(row, index) {
     contactado: row[9] === 'TRUE',
     direccion: row[10] || '',
     maps_url: row[11] || '',
-    etapa: row[12] || 'sin_contactar',
+    etapa: row[12] || (row[9] === 'TRUE' ? 'enviado' : 'sin_contactar'),
     notas: row[13] || '',
     ultimo_contacto: row[14] || '',
   };
