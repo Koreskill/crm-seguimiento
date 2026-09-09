@@ -1,40 +1,76 @@
 {
-  "stages": {
-    "sin_contactar": {
-      "label": "Sin Contactar",
-      "color": "#555555",
-      "emoji": "📋",
-      "message": "Hola {{nombre}} 👋 Soy Benja de KoreSkill, agencia de marketing digital. Vi tu negocio de {{rubro}} en {{ciudad}} y me gustaría mostrarte cómo podemos ayudarte a conseguir más clientes con Meta Ads. ¿Tenés 5 min para una consulta rápida sin cargo?"
+  "rubros": {
+    "default": {
+      "label": "General (fallback)",
+      "keywords": [],
+      "stages": {
+        "sin_contactar": {
+          "message": "Hola {{nombre}} 👋 Soy Benjamín de KoreSkill, agencia de marketing digital. Vi tu negocio de {{rubro}} en {{ciudad}} y me gustaría mostrarte cómo podemos ayudarte a potenciar las ventas. ¿Tenés 5 min para una consulta rápida sin cargo?"
+        },
+        "enviado": {
+          "message": "Hola {{nombre}}, te hacía seguimiento por mi mensaje anterior. Trabajo con negocios de {{rubro}} en {{ciudad}} y me gustaría contarte los resultados que estamos logrando. ¿Pudiste verlo? 🚀"
+        },
+        "respondio": {
+          "message": "Genial {{nombre}}! En KoreSkill nos especializamos en campañas de Meta Ads para {{rubro}}. ¿Te parece si coordinamos una llamada de 20 min para mostrarte nuestro método?"
+        },
+        "interesado": {
+          "message": "{{nombre}}, perfecto! Acá te dejo el link para agendar: [LINK] 📅 ¿Tenés alguna pregunta antes?"
+        },
+        "cerrado": {
+          "message": "{{nombre}}, bienvenido a KoreSkill! 🎉 Nos ponemos en contacto esta semana para arrancar con la estrategia."
+        },
+        "no_interesado": {
+          "message": "Perfecto {{nombre}}, no hay problema. Si en algún momento querés saber más, estaré disponible. ¡Mucho éxito! 👋"
+        }
+      }
     },
-    "enviado": {
-      "label": "Enviado",
-      "color": "#3b82f6",
-      "emoji": "📤",
-      "message": "Hola {{nombre}}, te escribía para hacer seguimiento de mi mensaje anterior. Trabajo con negocios de {{rubro}} en {{ciudad}} y me gustaría contarte los resultados que estamos logrando para negocios similares. ¿Pudiste verlo? 🚀"
+    "mascotas": {
+      "label": "Accesorios de mascotas",
+      "keywords": ["mascota", "pet", "perro", "gato", "veterinaria", "animal", "accesorios"],
+      "stages": {
+        "sin_contactar": {
+          "message": "Hola {{nombre}} como estás? Soy Benjamín de KoreSkill, encontré su negocio por maps y entré en la web y en su instagram — me contactaba porque estamos buscando tiendas de accesorios de mascotas para ayudarlas a potenciar las ventas.\n\nVi que tienen la web del 2022, ¿nunca usaron Shopify o hicieron anuncios?\n\nLos busqué en el administrador de Meta y no tenían campañas corriendo, por eso preguntaba 🐾\n\nTe consulto porque con esas herramientas podés crear algo así: {{web}} — que aumente las conversiones de la web"
+        },
+        "enviado": {
+          "message": "Hola {{nombre}}, seguimiento de mi mensaje anterior 🐾 Con Meta Ads y Shopify estamos logrando resultados muy buenos para tiendas de mascotas similares a la tuya en {{ciudad}}. ¿Pudiste ver lo que te mandé?"
+        },
+        "respondio": {
+          "message": "Genial {{nombre}}! Te muestro un ejemplo de lo que logramos: https://www.porotos.com.ar — una tienda de mascotas similar que aumentó sus conversiones con una web y anuncios bien configurados.\n\n¿Agendamos una llamada de 20 min para contarte cómo lo aplicamos a tu tienda?"
+        },
+        "interesado": {
+          "message": "{{nombre}}, perfecto! Acá podés agendar la sesión de estrategia: [LINK] 📅\n\nMientras tanto, ¿tenés web activa o todo es por Instagram?"
+        },
+        "cerrado": {
+          "message": "{{nombre}}, bienvenido a KoreSkill! 🎉 Vamos a arrancar con la estrategia esta semana. Te mando los próximos pasos por acá."
+        },
+        "no_interesado": {
+          "message": "Perfecto {{nombre}}, sin problema. Si en algún momento querés potenciar las ventas online de tu tienda, estaré disponible. ¡Mucho éxito! 🐾"
+        }
+      }
     },
-    "respondio": {
-      "label": "Respondió",
-      "color": "#f59e0b",
-      "emoji": "💬",
-      "message": "Genial {{nombre}}! Para contarte brevemente, en KoreSkill nos especializamos en campañas de Meta Ads para {{rubro}}. Estamos logrando resultados muy buenos para negocios en {{ciudad}}. ¿Te parece si coordinamos una llamada de 20 min para mostrarte nuestro método y ver si somos una buena opción?"
-    },
-    "interesado": {
-      "label": "Interesado",
-      "color": "#00d46a",
-      "emoji": "🤝",
-      "message": "{{nombre}}, perfecto! Acá te dejo el link para agendar nuestra sesión de estrategia gratuita: [TU_LINK_CALENDLY] 📅 En esa llamada te cuento todo el proceso y los resultados que podemos lograr para tu negocio. ¿Tenés alguna pregunta antes?"
-    },
-    "cerrado": {
-      "label": "Cerrado",
-      "color": "#10b981",
-      "emoji": "✅",
-      "message": "{{nombre}}, bienvenido a KoreSkill! 🎉 Vamos a ponernos en contacto esta semana para arrancar con la estrategia. Cualquier consulta no dudes en escribirme."
-    },
-    "no_interesado": {
-      "label": "No Interesado",
-      "color": "#ef4444",
-      "emoji": "❌",
-      "message": "Perfecto {{nombre}}, no hay problema. Si en algún momento querés saber más sobre cómo funcionamos, estaré disponible. ¡Mucho éxito con tu negocio! 👋"
+    "bebes": {
+      "label": "Artículos para bebés",
+      "keywords": ["bebé", "bebe", "maternidad", "infantil", "niño", "niña", "crianza"],
+      "stages": {
+        "sin_contactar": {
+          "message": "Hola {{nombre}} 👋 Soy Benjamín de KoreSkill. Vi tu tienda de {{rubro}} en {{ciudad}} y me contactaba porque trabajamos con negocios del sector bebés/maternidad potenciando sus ventas con Meta Ads. ¿Tenés anuncios corriendo actualmente?"
+        },
+        "enviado": {
+          "message": "Hola {{nombre}}, te hacía seguimiento 👶 Trabajamos con tiendas de artículos para bebés en {{ciudad}} logrando muy buenos resultados. ¿Pudiste ver mi mensaje anterior?"
+        },
+        "respondio": {
+          "message": "Genial {{nombre}}! Nos especializamos en campañas para tiendas de bebés y maternidad. Los resultados que logramos son muy interesantes. ¿Agendamos una llamada de 20 min para contarte?"
+        },
+        "interesado": {
+          "message": "{{nombre}}, perfecto! Acá podés agendar la sesión de estrategia: [LINK] 📅"
+        },
+        "cerrado": {
+          "message": "{{nombre}}, bienvenido a KoreSkill! 🎉 Esta semana te mandamos los próximos pasos para arrancar."
+        },
+        "no_interesado": {
+          "message": "Perfecto {{nombre}}, sin problema. Cuando quieras potenciar las ventas de tu tienda, acá estamos. ¡Mucho éxito! 👋"
+        }
+      }
     }
   }
 }

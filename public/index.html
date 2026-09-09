@@ -202,14 +202,33 @@
   .kcard-note:hover { background: var(--bg3); color: var(--text); }
 
   /* ── MENSAJES ── */
-  .messages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-  .msg-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .msg-card-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .msg-stage-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .msg-stage-name { font-size: 13px; font-weight: 700; }
-  .msg-card-body { padding: 16px; }
+  .mensajes-layout { display: flex; gap: 0; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; min-height: 560px; }
+  .rubros-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .rubros-sidebar-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; }
+  .rubros-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+  .rubro-item { padding: 9px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); transition: all .15s; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .rubro-item:hover { background: var(--bg3); color: var(--text); }
+  .rubro-item.active { background: var(--accent-dim); color: var(--accent); }
+  .rubro-item-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rubro-item-del { opacity: 0; font-size: 11px; padding: 2px 5px; border-radius: 4px; background: rgba(239,68,68,.15); color: var(--red); border: none; cursor: pointer; flex-shrink: 0; }
+  .rubro-item:hover .rubro-item-del { opacity: 1; }
+  .rubros-add { padding: 10px; border-top: 1px solid var(--border); }
+  .rubro-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .rubro-panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .rubro-panel-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .keywords-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .keywords-label { font-size: 11px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+  .keywords-input { flex: 1; min-width: 160px; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px; color: var(--text); padding: 7px 10px; font-size: 12px; outline: none; }
+  .keywords-input:focus { border-color: var(--accent); }
+  .rubro-panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+  .stage-templates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .msg-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .msg-card-header { padding: 11px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .msg-stage-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .msg-stage-name { font-size: 12px; font-weight: 700; }
+  .msg-card-body { padding: 14px; }
   .msg-textarea {
-    width: 100%; min-height: 120px; background: var(--bg3); border: 1px solid var(--border);
+    width: 100%; min-height: 110px; background: var(--bg3); border: 1px solid var(--border);
     border-radius: 8px; color: var(--text); font-size: 12px; padding: 10px 12px;
     resize: vertical; outline: none; font-family: inherit; line-height: 1.5;
   }
@@ -398,12 +417,31 @@
 
     <!-- ── MENSAJES ── -->
     <div id="section-mensajes" class="section">
-      <p style="font-size:13px;color:var(--text2);margin-bottom:20px">
-        Configurá los mensajes pre-armados para cada etapa del pipeline. Usá las variables para personalizar cada mensaje.<br>
-        Cuando presionás el botón de WhatsApp en un contacto, el mensaje de su etapa actual se pre-carga automáticamente.
-      </p>
-      <div class="messages-grid" id="messages-grid">
-        <div class="loading"><div class="spinner"></div></div>
+      <div class="mensajes-layout">
+        <!-- Left: rubros list -->
+        <div class="rubros-sidebar">
+          <div class="rubros-sidebar-header">Rubros</div>
+          <div class="rubros-list" id="rubros-list">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+          <div class="rubros-add">
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="openAddRubro()">+ Nuevo rubro</button>
+          </div>
+        </div>
+        <!-- Right: stage templates for selected rubro -->
+        <div class="rubro-panel" id="rubro-panel">
+          <div class="rubro-panel-header">
+            <div class="rubro-panel-title" id="rubro-panel-title">Cargando...</div>
+            <div class="keywords-row">
+              <span class="keywords-label">Keywords:</span>
+              <input class="keywords-input" id="keywords-input" type="text" placeholder="mascota, pet, perro... (separados por coma)" />
+              <button class="btn btn-ghost btn-sm" onclick="saveKeywords()">Guardar</button>
+            </div>
+          </div>
+          <div class="rubro-panel-body">
+            <div class="stage-templates-grid" id="stage-templates-grid"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -435,6 +473,24 @@
   </div>
 </div>
 
+<!-- MODAL NUEVO RUBRO -->
+<div class="modal-overlay" id="add-rubro-modal">
+  <div class="modal">
+    <div class="modal-title">➕ Nuevo Rubro</div>
+    <div class="modal-label">Nombre interno (sin espacios)</div>
+    <input class="modal-input" id="new-rubro-key" type="text" placeholder="ej: ropa_deportiva" />
+    <div class="modal-label">Etiqueta visible</div>
+    <input class="modal-input" id="new-rubro-label" type="text" placeholder="ej: Ropa Deportiva" />
+    <div class="modal-label">Keywords (separadas por coma)</div>
+    <input class="modal-input" id="new-rubro-keywords" type="text" placeholder="ej: ropa, indumentaria, deportiva" />
+    <div style="font-size:11px;color:var(--text3);margin-top:-8px;margin-bottom:12px">Las keywords se usan para asignar automáticamente el template correcto a cada contacto.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('add-rubro-modal').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createRubro()">Crear rubro</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-container" id="toasts"></div>
 
@@ -442,7 +498,8 @@
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let allContacts = [];
 let filteredContacts = [];
-let templates = {};
+let rubros = {};
+let activeRubro = 'default';
 let currentView = 'table';
 let sortField = 'nombre';
 let sortDir = 1;
@@ -515,8 +572,9 @@ async function loadTemplates() {
     const res = await fetch('/api/templates');
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
-    templates = data.templates;
-    renderMessages();
+    rubros = data.rubros;
+    renderRubrosList();
+    selectRubro(activeRubro);
   } catch(e) {
     console.error(e);
   }
@@ -709,12 +767,25 @@ function renderKanban() {
 }
 
 // ─── WHATSAPP ─────────────────────────────────────────────────────────────────
+function findRubroForContact(contact) {
+  const rubroVal = (contact.rubro || '').toLowerCase();
+  for (const [key, tmpl] of Object.entries(rubros)) {
+    if (key === 'default') continue;
+    const keywords = tmpl.keywords || [];
+    if (keywords.some(kw => rubroVal.includes(kw.toLowerCase()))) {
+      return tmpl;
+    }
+  }
+  return rubros.default || { stages: {} };
+}
+
 function buildWaUrl(contact) {
   const num = contact.whatsapp || '';
   if (!num) return null;
   const stage = contact.etapa || 'sin_contactar';
-  const tmpl = templates[stage] ? templates[stage].message : '';
-  const msg = tmpl
+  const rubroTmpl = findRubroForContact(contact);
+  const tmplMsg = rubroTmpl.stages?.[stage]?.message || '';
+  const msg = tmplMsg
     .replace(/\{\{nombre\}\}/g, contact.nombre)
     .replace(/\{\{rubro\}\}/g, contact.rubro)
     .replace(/\{\{ciudad\}\}/g, contact.ciudad)
@@ -805,33 +876,58 @@ async function saveModal() {
   }
 }
 
-// Close modal on overlay click
+// Close modals on overlay click
 document.getElementById('notes-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+document.getElementById('add-rubro-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
 
 // ─── MESSAGES ─────────────────────────────────────────────────────────────────
-function renderMessages() {
-  const grid = document.getElementById('messages-grid');
-  grid.innerHTML = Object.entries(STAGES).map(([key, stage]) => {
-    const tmpl = templates[key] || {};
+function renderRubrosList() {
+  const list = document.getElementById('rubros-list');
+  if (!list) return;
+  list.innerHTML = Object.entries(rubros).map(([key, r]) => `
+    <div class="rubro-item ${key === activeRubro ? 'active' : ''}" onclick="selectRubro('${key}')">
+      <span class="rubro-item-name">${r.label || key}</span>
+      ${key !== 'default' ? `<button class="rubro-item-del" onclick="deleteRubro(event,'${key}')" title="Eliminar">✕</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function selectRubro(key) {
+  if (!rubros[key]) key = 'default';
+  activeRubro = key;
+  renderRubrosList();
+  const r = rubros[key];
+  if (!r) return;
+  document.getElementById('rubro-panel-title').textContent = r.label || key;
+  const ki = document.getElementById('keywords-input');
+  if (ki) ki.value = (r.keywords || []).join(', ');
+  // Render stage templates for this rubro
+  const grid = document.getElementById('stage-templates-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(STAGES).map(([stageKey, stage]) => {
+    const msg = r.stages?.[stageKey]?.message || '';
+    const taId = `tmpl-${key}-${stageKey}`;
     return `<div class="msg-card">
       <div class="msg-card-header">
         <div class="msg-stage-dot" style="background:${stage.color}"></div>
         <div class="msg-stage-name">${stage.emoji} ${stage.label}</div>
       </div>
       <div class="msg-card-body">
-        <textarea class="msg-textarea" id="tmpl-${key}">${esc(tmpl.message || '')}</textarea>
+        <textarea class="msg-textarea" id="${taId}">${esc(msg)}</textarea>
         <div class="msg-vars">
-          <span class="var-tag" onclick="insertVar('tmpl-${key}','{{nombre}}')">{{nombre}}</span>
-          <span class="var-tag" onclick="insertVar('tmpl-${key}','{{rubro}}')">{{rubro}}</span>
-          <span class="var-tag" onclick="insertVar('tmpl-${key}','{{ciudad}}')">{{ciudad}}</span>
-          <span class="var-tag" onclick="insertVar('tmpl-${key}','{{web}}')">{{web}}</span>
+          <span class="var-tag" onclick="insertVar('${taId}','{{nombre}}')">{{nombre}}</span>
+          <span class="var-tag" onclick="insertVar('${taId}','{{rubro}}')">{{rubro}}</span>
+          <span class="var-tag" onclick="insertVar('${taId}','{{ciudad}}')">{{ciudad}}</span>
+          <span class="var-tag" onclick="insertVar('${taId}','{{web}}')">{{web}}</span>
         </div>
-        <div class="msg-preview-box" id="preview-${key}"></div>
+        <div class="msg-preview-box" id="preview-${key}-${stageKey}"></div>
         <div class="msg-actions">
-          <button class="btn btn-ghost btn-sm" onclick="togglePreview('${key}')">👁 Preview</button>
-          <button class="btn btn-primary btn-sm" onclick="saveTemplate('${key}')">Guardar</button>
+          <button class="btn btn-ghost btn-sm" onclick="togglePreview('${key}','${stageKey}')">👁 Preview</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTemplate('${key}','${stageKey}')">Guardar</button>
         </div>
       </div>
     </div>`;
@@ -840,6 +936,7 @@ function renderMessages() {
 
 function insertVar(textareaId, variable) {
   const ta = document.getElementById(textareaId);
+  if (!ta) return;
   const start = ta.selectionStart;
   const end = ta.selectionEnd;
   ta.value = ta.value.substring(0, start) + variable + ta.value.substring(end);
@@ -847,10 +944,11 @@ function insertVar(textareaId, variable) {
   ta.focus();
 }
 
-function togglePreview(key) {
-  const box = document.getElementById('preview-' + key);
+function togglePreview(rubroKey, stageKey) {
+  const box = document.getElementById(`preview-${rubroKey}-${stageKey}`);
+  if (!box) return;
   if (box.classList.contains('show')) { box.classList.remove('show'); return; }
-  const msg = document.getElementById('tmpl-' + key).value
+  const msg = document.getElementById(`tmpl-${rubroKey}-${stageKey}`).value
     .replace(/\{\{nombre\}\}/g, 'Juan García')
     .replace(/\{\{rubro\}\}/g, 'Tienda de ropa')
     .replace(/\{\{ciudad\}\}/g, 'Buenos Aires')
@@ -859,22 +957,102 @@ function togglePreview(key) {
   box.classList.add('show');
 }
 
-async function saveTemplate(key) {
-  const message = document.getElementById('tmpl-' + key).value;
+async function saveTemplate(rubroKey, stageKey) {
+  const ta = document.getElementById(`tmpl-${rubroKey}-${stageKey}`);
+  if (!ta) return;
+  const message = ta.value;
   try {
-    const res = await fetch(`/api/templates/${key}`, {
+    const res = await fetch(`/api/templates/${rubroKey}/${stageKey}`, {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ message })
     });
     const data = await res.json();
     if (data.success) {
-      if (!templates[key]) templates[key] = {};
-      templates[key].message = message;
+      if (!rubros[rubroKey].stages) rubros[rubroKey].stages = {};
+      if (!rubros[rubroKey].stages[stageKey]) rubros[rubroKey].stages[stageKey] = {};
+      rubros[rubroKey].stages[stageKey].message = message;
       toast('Mensaje guardado ✓', 'success');
+    } else {
+      toast(data.error || 'Error guardando', 'error');
     }
   } catch(e) {
     toast('Error guardando', 'error');
+  }
+}
+
+async function saveKeywords() {
+  const input = document.getElementById('keywords-input');
+  if (!input) return;
+  const keywords = input.value.split(',').map(k => k.trim()).filter(Boolean);
+  try {
+    const res = await fetch(`/api/templates/${activeRubro}/keywords`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ keywords })
+    });
+    const data = await res.json();
+    if (data.success) {
+      rubros[activeRubro].keywords = keywords;
+      toast('Keywords guardadas ✓', 'success');
+    } else {
+      toast(data.error || 'Error', 'error');
+    }
+  } catch(e) {
+    toast('Error guardando keywords', 'error');
+  }
+}
+
+function openAddRubro() {
+  document.getElementById('new-rubro-key').value = '';
+  document.getElementById('new-rubro-label').value = '';
+  document.getElementById('new-rubro-keywords').value = '';
+  document.getElementById('add-rubro-modal').classList.add('open');
+}
+
+async function createRubro() {
+  const key = document.getElementById('new-rubro-key').value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const label = document.getElementById('new-rubro-label').value.trim();
+  const kwInput = document.getElementById('new-rubro-keywords').value;
+  const keywords = kwInput.split(',').map(k => k.trim()).filter(Boolean);
+  if (!key || !label) { toast('Completá nombre y etiqueta', 'error'); return; }
+  try {
+    const res = await fetch('/api/templates/rubros', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ key, label, keywords })
+    });
+    const data = await res.json();
+    if (data.success) {
+      rubros[key] = data.rubro;
+      document.getElementById('add-rubro-modal').classList.remove('open');
+      toast(`Rubro "${label}" creado ✓`, 'success');
+      selectRubro(key);
+    } else {
+      toast(data.error || 'Error', 'error');
+    }
+  } catch(e) {
+    toast('Error creando rubro', 'error');
+  }
+}
+
+async function deleteRubro(evt, key) {
+  evt.stopPropagation();
+  if (!confirm(`¿Borrar el rubro "${rubros[key]?.label || key}"? Esta acción no se puede deshacer.`)) return;
+  try {
+    const res = await fetch(`/api/templates/rubros/${key}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      delete rubros[key];
+      if (activeRubro === key) activeRubro = 'default';
+      renderRubrosList();
+      selectRubro(activeRubro);
+      toast('Rubro eliminado', 'success');
+    } else {
+      toast(data.error || 'Error', 'error');
+    }
+  } catch(e) {
+    toast('Error eliminando rubro', 'error');
   }
 }
 

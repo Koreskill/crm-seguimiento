@@ -17,18 +17,22 @@ const TEMPLATES_FILE = path.join(__dirname, 'templates.json');
 // ─── Google Sheets Auth ───────────────────────────────────────────────────────
 async function getSheets() {
   let auth;
+
   if (process.env.GOOGLE_CREDENTIALS_JSON) {
+    // Producción (Dokploy/Docker): credenciales en variable de entorno
     const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
     auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
   } else {
+    // Local: archivo credentials.json en el directorio raíz
     auth = new google.auth.GoogleAuth({
       keyFile: path.join(__dirname, 'credentials.json'),
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
   }
+
   const client = await auth.getClient();
   return google.sheets({ version: 'v4', auth: client });
 }
@@ -52,7 +56,7 @@ function rowToContact(row, index) {
     contactado: row[9] === 'TRUE',
     direccion: row[10] || '',
     maps_url: row[11] || '',
-    etapa: row[12] || (row[9] === 'TRUE' ? 'enviado' : 'sin_contactar'),
+    etapa: row[12] || 'sin_contactar',
     notas: row[13] || '',
     ultimo_contacto: row[14] || '',
   };
@@ -191,24 +195,78 @@ app.get('/api/metrics', async (req, res) => {
   }
 });
 
-// GET templates
+// GET all templates (rubros)
 app.get('/api/templates', (req, res) => {
   try {
     const data = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
-    res.json({ success: true, templates: data.stages });
+    res.json({ success: true, rubros: data.rubros });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// PUT update a template
-app.put('/api/templates/:stage', (req, res) => {
+// PUT update message for a specific rubro + stage
+app.put('/api/templates/:rubro/:stage', (req, res) => {
   try {
-    const { stage } = req.params;
+    const { rubro, stage } = req.params;
     const { message } = req.body;
     const data = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
-    if (!data.stages[stage]) return res.status(404).json({ success: false, error: 'Stage not found' });
-    data.stages[stage].message = message;
+    if (!data.rubros[rubro]) return res.status(404).json({ success: false, error: 'Rubro not found' });
+    if (!data.rubros[rubro].stages[stage]) {
+      data.rubros[rubro].stages[stage] = {};
+    }
+    data.rubros[rubro].stages[stage].message = message;
+    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT update keywords for a rubro
+app.put('/api/templates/:rubro/keywords', (req, res) => {
+  try {
+    const { rubro } = req.params;
+    const { keywords } = req.body;
+    const data = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
+    if (!data.rubros[rubro]) return res.status(404).json({ success: false, error: 'Rubro not found' });
+    data.rubros[rubro].keywords = keywords;
+    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST create new rubro
+app.post('/api/templates/rubros', (req, res) => {
+  try {
+    const { key, label, keywords } = req.body;
+    if (!key || !label) return res.status(400).json({ success: false, error: 'key y label requeridos' });
+    const data = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
+    if (data.rubros[key]) return res.status(400).json({ success: false, error: 'Ya existe ese rubro' });
+    // Copy default stages as starting point
+    const defaultStages = data.rubros.default?.stages || {};
+    data.rubros[key] = {
+      label,
+      keywords: keywords || [],
+      stages: JSON.parse(JSON.stringify(defaultStages)),
+    };
+    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true, rubro: data.rubros[key] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE rubro (not default)
+app.delete('/api/templates/rubros/:rubro', (req, res) => {
+  try {
+    const { rubro } = req.params;
+    if (rubro === 'default') return res.status(400).json({ success: false, error: 'No se puede borrar el rubro default' });
+    const data = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
+    if (!data.rubros[rubro]) return res.status(404).json({ success: false, error: 'Rubro not found' });
+    delete data.rubros[rubro];
     fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true });
   } catch (err) {
