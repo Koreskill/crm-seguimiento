@@ -16,10 +16,19 @@ const TEMPLATES_FILE = path.join(__dirname, 'templates.json');
 
 // ─── Google Sheets Auth ───────────────────────────────────────────────────────
 async function getSheets() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: path.join(__dirname, 'credentials.json'),
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+  let auth;
+  if (process.env.GOOGLE_CREDENTIALS_JSON) {
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
+    auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+  } else {
+    auth = new google.auth.GoogleAuth({
+      keyFile: path.join(__dirname, 'credentials.json'),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+  }
   const client = await auth.getClient();
   return google.sheets({ version: 'v4', auth: client });
 }
@@ -43,7 +52,7 @@ function rowToContact(row, index) {
     contactado: row[9] === 'TRUE',
     direccion: row[10] || '',
     maps_url: row[11] || '',
-    etapa: row[12] || 'sin_contactar',
+    etapa: row[12] || (row[9] === 'TRUE' ? 'enviado' : 'sin_contactar'),
     notas: row[13] || '',
     ultimo_contacto: row[14] || '',
   };
